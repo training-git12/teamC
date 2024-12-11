@@ -42,3 +42,37 @@
 //   Vue Routerを統合することで、ルーティングに関するコードを集中管理し、可読性や保守性を向上させます
 //=============================================================================
 
+// Vue Routerのインポート
+import { createRouter, createWebHistory } from 'vue-router';
+
+// 商品一覧コンポーネント
+import ProductList from '../components/ProductList.vue';
+
+// ルートの定義
+// ルート管理: アプリケーション内で異なるページやコンポーネントを URL に応じて切り替える
+const routes = [
+  {
+    path: '/productlist',   // 商品一覧ページのパス
+    name: 'ProductList',    // ルート名（任意）
+    component: ProductList, // このルートに対応するコンポーネント
+  },
+  {
+    //リダイレクト: 特定の条件下で適切なページに案内する
+    path: '/',                // ルートパスへのアクセス
+    redirect: '/productlist', // リダイレクト先（商品一覧ページ）
+  },
+];
+
+// Vue Router のインスタンス作成
+const router = createRouter({
+  // 履歴モードを使用
+  history: createWebHistory(),
+  // 定義されたルートを登録
+  routes,
+});
+
+// 初期化時の確認用ログ
+console.log('Vue Router initialized');
+
+// ルーターをエクスポート
+export default router;
