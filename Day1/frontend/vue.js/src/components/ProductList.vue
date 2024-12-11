@@ -1,49 +1,67 @@
-//=============================================================================
-// src/components/ProductList.vue
-//
-// 商品データを表示し、詳細情報や「いいね」機能などを提供するコンポーネントです
-//=============================================================================
-
-//-----------------------------------------------------------------------------
-//テンプレートセレクション
-// テンプレートセクションは、Vue コンポーネントの 見た目（UI）を定義します
-// HTMLに似た記法を使用し、動的データをバインドしてUIをレンダリングします
-//
-// 動的データのバインディング:
-//   {{}}（マスタッシュ記法）を使用して、スクリプトセクションで定義したデータや計算プロパティを表示できます
-// ディレクティブ:
-//   Vue.js 独自の属性（ディレクティブ）を利用して、HTML要素に動的な振る舞いを追加します
-//   例: v-if、v-for、v-bind、v-on。
-//-----------------------------------------------------------------------------
+<!-- components/ProductList.vue -->
 <template>
-
+  <div class="product-list">
+    <h2>商品一覧</h2>
+    <div class="products-grid">
+      <div v-for="product in products" :key="product.id" class="product-card">
+        <h3>{{ product.name }}</h3>
+        <p>¥{{ product.price }}</p>
+        <p>{{ product.description }}</p>
+        <button @click="addToCart(product)">カートに追加</button>
+      </div>
+    </div>
+  </div>
 </template>
 
-//-----------------------------------------------------------------------------
-//スクリプトセレクション
-// スクリプトセクションは、コンポーネントの ロジック や データ管理 を記述します
-// 主に JavaScript を使い、Vue コンポーネントの機能を実装します
-//
-// オブジェクト形式で定義
-// ・data    : コンポーネントの状態を保持
-// ・methods : ユーザーアクションやカスタムロジックを実装
-// ・computed: データの派生値（キャッシュされる）
-// ・watch   : 特定のデータの変化を監視し、対応する処理を実行
-// ・ライフサイクルフック: コンポーネントの初期化や破棄時に実行するコードを記述（例: mounted）
-//-----------------------------------------------------------------------------
 <script>
-
+export default {
+  name: 'ProductList',
+  data() {
+    return {
+      products: [
+        { id: 1, name: '商品1', price: 1000, description: '商品1の説明' },
+        { id: 2, name: '商品2', price: 2000, description: '商品2の説明' },
+        { id: 3, name: '商品3', price: 3000, description: '商品3の説明' }
+      ]
+    }
+  },
+  methods: {
+    addToCart(product) {
+      // カート追加のロジックを実装予定
+      console.log(`${product.name}をカートに追加しました`)
+    }
+  }
+}
 </script>
 
-//-----------------------------------------------------------------------------
-//スタイルセレクション
-// スタイルセクションは、コンポーネントのデザインやレイアウトを定義します。CSSやSCSSなどを記述します
-//
-// コンポーネントスコープ
-// ・スタイルをそのコンポーネントに限定することができます（scoped 属性）
-// プリプロセッサ
-// ・SCSS、LESS、Stylus などの CSS 拡張言語を利用可能
-//-----------------------------------------------------------------------------
-<style>
+<style scoped>
+.product-list {
+  padding: 20px;
+}
 
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.product-card {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
 </style>
