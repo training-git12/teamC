@@ -1,13 +1,29 @@
-<!-- components/ProductList.vue -->
 <template>
-  <div class="product-list">
-    <h2>商品一覧</h2>
-    <div class="products-grid">
-      <div v-for="product in products" :key="product.id" class="product-card">
-        <h3>{{ product.name }}</h3>
-        <p>¥{{ product.price }}</p>
-        <p>{{ product.description }}</p>
-        <button @click="addToCart(product)">カートに追加</button>
+  <div class="container mx-auto px-4">
+    <h1 class="text-2xl font-bold my-8">商品一覧</h1>
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div v-for="product in products" :key="product._id.$oid" 
+           class="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
+        <!-- 画像サイズを調整 -->
+        <div class="w-full aspect-square overflow-hidden">
+          <img :src="product.images[0]" 
+               :alt="product.name" 
+               class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+        </div>
+        <!-- 商品情報 -->
+        <div class="p-4">
+          <h2 class="text-lg font-medium mb-2 h-14 line-clamp-2">{{ product.name }}</h2>
+          <p class="text-gray-600 text-sm mb-3 h-12 line-clamp-2">{{ product.description }}</p>
+          <div class="flex justify-between items-end">
+            <div>
+              <p class="text-xl font-bold text-red-600">¥{{ product.price.toLocaleString() }}</p>
+              <p class="text-sm text-gray-500">在庫: {{ product.stock }}個</p>
+            </div>
+            <button class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm">
+              カートに入れる
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -15,53 +31,31 @@
 
 <script>
 export default {
-  name: 'ProductList',
   data() {
     return {
-      products: [
-        { id: 1, name: '商品1', price: 1000, description: '商品1の説明' },
-        { id: 2, name: '商品2', price: 2000, description: '商品2の説明' },
-        { id: 3, name: '商品3', price: 3000, description: '商品3の説明' }
-      ]
+      products: [],
+      loading: true
     }
   },
-  methods: {
-    addToCart(product) {
-      // カート追加のロジックを実装予定
-      console.log(`${product.name}をカートに追加しました`)
+  async created() {
+    try {
+      const response = await fetch('http://localhost:3000/api/products')
+      const data = await response.json()
+      this.products = data
+    } catch (error) {
+      console.error('商品の取得に失敗しました:', error)
+    } finally {
+      this.loading = false
     }
   }
 }
 </script>
 
-<style scoped>
-.product-list {
-  padding: 20px;
-}
-
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
-  padding: 20px;
-}
-
-.product-card {
-  border: 1px solid #ddd;
-  padding: 15px;
-  border-radius: 8px;
-}
-
-button {
-  background-color: #4CAF50;
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #45a049;
+<style>
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 </style>
