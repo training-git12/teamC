@@ -1,18 +1,11 @@
-//=============================================================================
-// routes/productRoutes.js
-//
-// 役割
-//  商品データに関連するAPIエンドポイントを定義するためのルートファイルです
-//  商品検索、全商品の取得、特定商品の取得など、ECサイトで商品データを管理するための
-//  基本的な機能を提供します
-//
-// 目的
-// - 商品データの管理:
-//   商品の検索、一覧取得、詳細取得といった商品関連の操作を処理するためのエンドポイントを提供します
-// 
-// - バックエンドのAPI設計:
-//   フロントエンドや他のサービスが利用する統一された商品管理APIを作成します
-// 
-// - コードの分離と再利用性の向上:
-//   ルート定義とビジネスロジック（コントローラー）を分離し、コードの可読性と再利用性を高めます
-//=============================================================================
+const express = require('express');
+const router = express.Router();
+
+
+const productController = require('../controllers/productController');
+
+router.get('/', productController.getAllProducts);       // `/` のルート
+
+router.get('/:productId', productController.getProductById); // `/:productId` のルート
+
+module.exports = router;
