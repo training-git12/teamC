@@ -1,19 +1,16 @@
-//=============================================================================
-// models/product.js
-//
-// 役割
-// MongoDBのproductコレクションに対応するデータモデル（Product）を定義します
-// 商品データの構造や制約を管理するためのスキーマを作成し、アプリケーション内で
-// 商品データを効率的に操作するための基盤を提供します
-//
-// 目的
-// - 商品データの構造定義
-//   商品名、説明、価格、在庫など、商品の基本情報をスキーマとして定義します
-//   各フィールドに適切なデータ型やデフォルト値を指定します
-// - MongoDBとの連携
-//   商品データをproductコレクションに保存したり、取得したりする際にMongooseを通じて操作を簡単に行います
-// -商品データの一貫性を保証
-//   定義されたスキーマを基にデータの整合性を保ち、不正なデータが保存されるのを防ぎます
-// - 再利用可能なモデル作成
-//   このモデルを通じて、アプリケーション全体で商品データの操作を統一します
-//=============================================================================
+const mongoose = require('../config/database'); 
+
+const productSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    description: { type: String, required: true },
+    price: { type: Number, required: true },
+    category: { type: String, required: true },
+    type: { type: String, required: true },
+    brand: { type: String, required: true },
+    stock: { type: Number, required: true },
+    images: { type: [String], required: true }
+});
+
+const Product = mongoose.model('Product', productSchema);
+
+module.exports = Product;
