@@ -100,6 +100,7 @@ export default {
       try {
         // APIリクエスト
         const response = await axios.get("http://18.178.128.74:3000/api/products");
+        // const response = await axios.get("http://localhost:3000/api/products");     // ローカルで立ち上げる場合
         // 商品リストをデータに設定
         this.products = response.data;
       } catch (error) {
