@@ -15,3 +15,26 @@
 // - エンドポイントの再利用性:
 //   コントローラーとしてエンドポイントに対応した処理を切り出し、コードの再利用性と保守性を向上させます
 //=============================================================================
+
+const getAllProducts = async () => {
+    try {
+        const products = await Product.find();
+        return products;
+    } catch (err) {
+        console.error('Error fetching products:', err);
+        throw new Error('Unable to fetch products from database'); 
+    }
+};
+
+app.get('/api/products', async (req, res) => {
+    try {
+        const products = await getAllProducts();
+        if (!products) {
+            return res.status(404).json({ message: 'No products found' }); 
+        }
+        res.json(products); 
+    } catch (err) {
+        console.error('Error in API endpoint:', err);
+        res.status(500).json({ message: 'Error fetching products', error: err.message }); 
+    }
+});
