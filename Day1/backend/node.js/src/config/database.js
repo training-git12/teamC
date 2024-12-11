@@ -14,3 +14,16 @@
 // - 環境変数の活用
 //   開発環境や本番環境に応じて、異なるMongoDB URIを柔軟に切り替えられる設計を提供します
 //=============================================================================
+const mongoose = require('mongoose');
+
+// MongoDBの接続URI
+const dbURI = 'mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.3.2'; 
+
+// MongoDBへの接続
+mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => {
+        console.log('MongoDB connected successfully');
+    })
+    .catch((err) => {
+        console.error('Error connecting to MongoDB:', err);
+    });
