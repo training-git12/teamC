@@ -16,3 +16,22 @@
 // - コードの分離と再利用性の向上:
 //   ルート定義とビジネスロジック（コントローラー）を分離し、コードの可読性と再利用性を高めます
 //=============================================================================
+
+const express = require('express');
+const router = express.Router();
+
+// 商品関連のコントローラをインポート
+const productController = require('../controllers/productController');
+
+// 全商品の一覧を取得するAPI
+// クライアントに全ての商品データを返す
+// 例: `/` で全商品を取得
+router.get('/', productController.getAllProducts);       // `/` のルート
+
+// 特定の商品をIDで取得するAPI
+// URLパラメータで指定された商品IDの商品データを返す
+// 例: `/:productId`（例: `/67382d86a0c5786afcfe6911`）で該当商品の詳細を取得
+router.get('/:productId', productController.getProductById); // `/:productId` のルート
+
+// このルーターを他のモジュールで使用可能にする
+module.exports = router;

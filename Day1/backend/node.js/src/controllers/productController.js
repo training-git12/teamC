@@ -16,25 +16,38 @@
 //   コントローラーとしてエンドポイントに対応した処理を切り出し、コードの再利用性と保守性を向上させます
 //=============================================================================
 
-const getAllProducts = async () => {
+// Productモデルをインポート（MongoDBのproductコレクションを操作するため）
+const Product = require('../models/product');
+
+// 全商品を取得するコントローラ
+exports.getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find();
-        return products;
-    } catch (err) {
-        console.error('Error fetching products:', err);
-        throw new Error('Unable to fetch products from database'); 
+        // データベースから全ての商品を取得
+        const products = await Product.find({});
+        // クライアントにJSON形式で商品データを返す
+        res.json(products);
+    } catch (error) {
+        // エラー発生時はコンソールにログを出力し、ステータス500を返す
+        console.error("Error fetching products:", error);
+        res.status(500).send(error);
     }
 };
 
-app.get('/api/products', async (req, res) => {
+// 指定されたIDの商品を取得するコントローラ
+exports.getProductById = async (req, res) => {
+    // リクエストURLからproductIdを取得
+    const { productId } = req.params;
+    
     try {
-        const products = await getAllProducts();
-        if (!products) {
-            return res.status(404).json({ message: 'No products found' }); 
-        }
-        res.json(products); 
-    } catch (err) {
-        console.error('Error in API endpoint:', err);
-        res.status(500).json({ message: 'Error fetching products', error: err.message }); 
+        // データベースから指定されたIDの商品を取得
+        const product = await Product.findById(productId);
+        // 該当商品が存在しない場合は404エラーを返す
+        if (!product) return res.status(404).json({ message: 'Product not found' });
+        // 該当商品をJSON形式でクライアントに返す
+        res.json(product);
+    } catch (error) {
+        // エラー発生時はコンソールにログを出力し、ステータス500を返す
+        console.error("Error fetching product:", error);
+        res.status(500).send(error);
     }
-});
+};

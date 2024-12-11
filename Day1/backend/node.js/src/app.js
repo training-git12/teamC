@@ -10,31 +10,34 @@
 //  取得したりするためのAPIエンドポイントを提供します
 //=============================================================================
 
-const express = require('express');
-const cors = require('cors');
-const fs = require('fs');
-const path = require('path');
+// 必要なモジュールをインポート
+const express = require('express');   // Expressフレームワークを使用してサーバーを構築
+const cors = require('cors');         // CORSポリシーを設定するためのミドルウェア
+const mongoose = require('mongoose'); // MongoDBと接続するためのODMライブラリ
+
+// 商品関連のAPIルートを定義したモジュールをインポート
+const productRoutes = require('./routes/productRoutes');
+
+// Expressアプリケーションを作成
 const app = express();
+
+// サーバーがリッスンするポート番号を定義
 const port = 3000;
 
-app.use(cors());
-app.use(express.json());
+// MongoDBに接続
+mongoose.connect('mongodb://localhost/ecsite')   // 接続先のMongoDB URIを指定
+  .then(() => console.log("MongoDB connected"))  // 接続成功時のログ
+  .catch(err => console.error("MongoDB connection error:", err));  // 接続失敗時のエラーログ
 
-// product.json を読み込む
-let products = [];
-try {
-    const productPath = path.join(__dirname, './data/product.json');
-    const fileContent = fs.readFileSync(productPath, 'utf8');
-    const data = JSON.parse(fileContent);
-    products = data.products;  // 変換後のJSONの形式に合わせて修正
-} catch (error) {
-    console.error('Error reading product.json:', error);
-}
+// ミドルウェアの設定
+app.use(cors());         // CORSを許可（クライアントが別のオリジンからアクセスできるようにする）
+app.use(express.json()); // リクエストボディをJSONとして解析
 
-app.get('/api/products', (req, res) => {
-    res.json(products);
-});
+// 商品関連のルートを/api/productsパスに適用
+app.use('/api/products', productRoutes);
 
+// サーバーの起動
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+  // サーバーが正常に起動した場合にログを出力
+  console.log(`Server running on http://localhost:${port}`);
 });
