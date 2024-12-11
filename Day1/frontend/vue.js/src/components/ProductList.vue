@@ -1,27 +1,22 @@
 <template>
-  <div class="container mx-auto px-4">
-    <h1 class="text-2xl font-bold my-8">商品一覧</h1>
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+  <div class="mx-auto px-4 max-w-7xl">
+    <h2 class="text-2xl font-bold my-6">商品一覧</h2>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       <div v-for="product in products" :key="product._id.$oid" 
-           class="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
-        <!-- 画像サイズを調整 -->
-        <div class="w-full aspect-square overflow-hidden">
+           class="bg-white rounded-lg border shadow-sm hover:shadow-md transition-shadow">
+        <!-- 商品画像 -->
+        <div class="aspect-square overflow-hidden">
           <img :src="product.images[0]" 
                :alt="product.name" 
-               class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+               class="w-full h-full object-cover">
         </div>
         <!-- 商品情報 -->
-        <div class="p-4">
-          <h2 class="text-lg font-medium mb-2 h-14 line-clamp-2">{{ product.name }}</h2>
-          <p class="text-gray-600 text-sm mb-3 h-12 line-clamp-2">{{ product.description }}</p>
-          <div class="flex justify-between items-end">
-            <div>
-              <p class="text-xl font-bold text-red-600">¥{{ product.price.toLocaleString() }}</p>
-              <p class="text-sm text-gray-500">在庫: {{ product.stock }}個</p>
-            </div>
-            <button class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm">
-              カートに入れる
-            </button>
+        <div class="p-3">
+          <h3 class="font-medium text-sm mb-1 line-clamp-2">{{ product.name }}</h3>
+          <p class="text-xs text-gray-600 mb-2 line-clamp-2">{{ product.description }}</p>
+          <div class="mt-auto">
+            <p class="text-lg font-bold text-red-600">¥{{ product.price.toLocaleString() }}</p>
+            <p class="text-xs text-gray-500">在庫: {{ product.stock }}個</p>
           </div>
         </div>
       </div>
@@ -31,10 +26,10 @@
 
 <script>
 export default {
+  name: 'ProductList',
   data() {
     return {
-      products: [],
-      loading: true
+      products: []
     }
   },
   async created() {
@@ -44,14 +39,12 @@ export default {
       this.products = data
     } catch (error) {
       console.error('商品の取得に失敗しました:', error)
-    } finally {
-      this.loading = false
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
