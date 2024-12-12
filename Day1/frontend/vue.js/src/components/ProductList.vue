@@ -97,11 +97,12 @@ export default {
   //データプロパティ
   data() {
     return {
-      products: [],          // APIから取得した商品のリスト
-      selectedProduct: null, // モーダルで表示する選択された商品
-      likedProducts: {},     // いいね済みの商品の状態を管理
-      currentUserId: "671e0166eed5dc448afe6911", // 現在のユーザーID「yamada taro」
-      dialogVisible: false,  // モーダルの表示/非表示
+      products: [],
+      selectedProduct: null,
+      likedProducts: {},
+      currentUserId: "671e0166eed5dc448afe6911",
+      dialogVisible: false,
+      isAdminMode: false,  // 管理者モードのフラグを追加
     };
   },
   
@@ -202,6 +203,54 @@ export default {
         this.likedProducts[productId] = true;
       } catch (error) {
         console.error("Error liking product:", error);
+      }
+    },
+
+    // いいねを削除（個別）
+    async removeLike(productId) {
+      try {
+        await axios.delete(`http://18.178.128.74:3000/api/like`, {
+          data: {
+            userId: this.currentUserId,
+            productId: productId
+          }
+        });
+        
+        // ローカルの状態を更新
+        this.likedProducts[productId] = false;
+        await this.fetchProducts(); // 商品リストを再取得
+      } catch (error) {
+        console.error("Error removing like:", error);
+      }
+    },
+
+    // 全てのいいねを削除
+    async clearAllLikes() {
+      try {
+        const confirmed = await ElMessageBox.confirm(
+          'すべてのいいねを削除してもよろしいですか？',
+          '確認',
+          {
+            confirmButtonText: '削除',
+            cancelButtonText: 'キャンセル',
+            type: 'warning'
+          }
+        );
+
+        if (confirmed) {
+          // いいね済みの商品のIDを取得
+          const likedProductIds = Object.keys(this.likedProducts).filter(id => this.likedProducts[id]);
+          
+          // すべてのいいねを削除
+          await Promise.all(likedProductIds.map(id => this.removeLike(id)));
+          
+          ElMessage.success('すべてのいいねを削除しました');
+        }
+      } catch (error) {
+        if (error !== 'cancel') {
+          console.error("Error clearing likes:", error);
+          ElMessage.error('いいねの一括削除に失敗しました');
+        }
       }
     },
   },
