@@ -130,7 +130,7 @@ export default {
     // 目的: 商品データをAPIから取得してテーブルに表示
     async fetchProducts() {
       try {
-        const response = await axios.get("http://18.178.128.74:3000/api/products");
+        const response = await axios.get("http://54.248.228.85:3000/api/products");
         // APIから取得したデータをproductsに格納
         this.products = response.data;
         // デバッグ用
@@ -152,7 +152,7 @@ export default {
 
       try {
         const response = await axios.post(
-          "http://18.178.128.74:3000/api/admin/reset-likes-by-user",
+          "http://54.248.228.85:3000/api/admin/reset-likes-by-user",
           { userId: this.userId }
         );
         this.message = response.data.message;  // 操作結果を表示
@@ -174,7 +174,7 @@ export default {
 
       try {
         const response = await axios.post(
-          "http://18.178.128.74:3000/api/admin/reset-likes-by-product",
+          "http://54.248.228.85:3000/api/admin/reset-likes-by-product",
           { productId: this.productId }
         );
         this.message = response.data.message;
@@ -190,7 +190,7 @@ export default {
     async resetLikesForProduct(productId) {
       try {
         const response = await axios.post(
-          "http://18.178.128.74:3000/api/admin/reset-likes-by-product",
+          "http://54.248.228.85:3000/api/admin/reset-likes-by-product",
           { productId }
         );
         this.message = response.data.message;

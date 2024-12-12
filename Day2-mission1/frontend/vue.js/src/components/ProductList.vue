@@ -135,7 +135,7 @@ export default {
       try {
         this.likedProducts = {};
         const response = await axios.get(
-          `http://18.178.128.74:3000/api/liked-products/${this.currentUserId}`
+          `http://54.248.228.85:3000/api/liked-products/${this.currentUserId}`
         );
         response.data.forEach((productId) => {
           this.likedProducts[productId] = true;
@@ -161,7 +161,7 @@ export default {
     async fetchProducts() {
       try {
         const response = await axios.get(
-          "http://18.178.128.74:3000/api/products"
+          "http://54.248.228.85:3000/api/products"
         );
         this.products = response.data;
       } catch (error) {
@@ -196,13 +196,13 @@ export default {
       }
 
       try {
-        await axios.post("http://18.178.128.74:3000/api/like", {
+        await axios.post("http://54.248.228.85:3000/api/like", {
           userId: this.currentUserId,
           productId,
         });
 
         const updatedProduct = await axios.get(
-          `http://18.178.128.74:3000/api/products/${productId}`
+          `http://54.248.228.85:3000/api/products/${productId}`
         );
         // 更新された「いいね」数
         this.selectedProduct.likes = updatedProduct.data.likes;
