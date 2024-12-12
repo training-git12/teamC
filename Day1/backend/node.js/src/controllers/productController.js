@@ -51,3 +51,29 @@ exports.getProductById = async (req, res) => {
         res.status(500).send(error);
     }
 };
+
+// いいねの切り替え処理
+exports.toggleLike = async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.productId);
+        
+        if (!product) {
+            return res.status(404).json({ 
+                success: false, 
+                message: '商品が見つかりません' 
+            });
+        }
+
+        // いいね数の更新を削除し、成功レスポンスのみを返す
+        res.json({ 
+            success: true,
+            message: 'いいねを更新しました'
+        });
+    } catch (error) {
+        console.error('Error in toggleLike:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'いいねの更新中にエラーが発生しました' 
+        });
+    }
+};

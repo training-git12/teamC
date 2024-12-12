@@ -82,14 +82,10 @@ const productSchema = new mongoose.Schema({
       date: Date,
     },
   ],
-  
-  // 商品に対する「いいね」数
-  // デフォルト値は0
-  likes: { type: Number, default: 0 }
 });
 
 // Mongooseモデルを作成
 // 第一引数: モデル名 ('Product') 
 // 第二引数: スキーマ (productSchema)
 // 第三引数: コレクション名 ('product') 明示的に指定
-module.exports = mongoose.model('Product', productSchema, 'product');
+module.exports = mongoose.model('Product', productSchema, 'products');

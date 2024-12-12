@@ -33,5 +33,8 @@ router.get('/', productController.getAllProducts);       // `/` のルート
 // 例: `/:productId`（例: `/67382d86a0c5786afcfe6911`）で該当商品の詳細を取得
 router.get('/:productId', productController.getProductById); // `/:productId` のルート
 
+// いいね機能のルートを追加
+router.post('/:productId/like', productController.toggleLike);  // いいねの切り替え用
+
 // このルーターを他のモジュールで使用可能にする
 module.exports = router;
