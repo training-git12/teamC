@@ -22,6 +22,7 @@ const router = express.Router();
 
 // 商品関連のコントローラをインポート
 const productController = require('../controllers/productController');
+const searchController = require('../controllers/searchController');
 
 // 全商品の一覧を取得するAPI
 // クライアントに全ての商品データを返す
@@ -32,6 +33,8 @@ router.get('/', productController.getAllProducts);       // `/` のルート
 // URLパラメータで指定された商品IDの商品データを返す
 // 例: `/:productId`（例: `/67382d86a0c5786afcfe6911`）で該当商品の詳細を取得
 router.get('/:productId', productController.getProductById); // `/:productId` のルート
+
+router.get('/products/search', searchController.searchProducts);
 
 // このルーターを他のモジュールで使用可能にする
 module.exports = router;
