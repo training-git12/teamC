@@ -362,3 +362,4 @@ export default {
   gap: 10px;              /* アイコンとテキストの間に余白を設定 */
 }
 </style>
+
