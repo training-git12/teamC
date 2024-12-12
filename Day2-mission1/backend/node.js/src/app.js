@@ -53,9 +53,9 @@ app.get('*', (req, res) => {
   
   // クライアントに適切なHTMLファイルを返す
   if (req.path.startsWith('/admin')) {
-    res.sendFile(path.resolve(__dirname, '../frontend/vue.js_day1_3/src/components/AdminPanel.vue'));
+    res.sendFile(path.resolve(__dirname, '../frontend/vue.js/src/components/AdminPanel.vue'));
   } else if (req.path.startsWith('/productlist')) {
-    res.sendFile(path.resolve(__dirname, '../frontend/vue.js_day1_3/src/components/ProductList.vue'));
+    res.sendFile(path.resolve(__dirname, '../frontend/vue.js/src/components/ProductList.vue'));
   } else {
     // リクエストされたパスが存在しない場合は404エラーを返す
     res.status(404).send('Not Found');
