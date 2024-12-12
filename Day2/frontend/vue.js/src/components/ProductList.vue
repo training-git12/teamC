@@ -145,21 +145,13 @@ export default {
     // ユーザーが「いいね」した商品IDを取得し、likedProducts オブジェクトに記録します
     async fetchLikedProducts() {
       try {
-<<<<<<< Updated upstream
-        // APIリクエスト
-        const response = await axios.get("http://18.178.128.74:3000/api/products");
-        // const response = await axios.get("http://localhost:3000/api/products");     // ローカルで立ち上げる場合
-        // 商品リストをデータに設定
-        this.products = response.data;
-=======
         this.likedProducts = {};
         const response = await axios.get(
-          `http://18.178.128.74:3000/api/liked-products/${this.currentUserId}`
+          `http://54.248.228.85:3000/api/liked-products/${this.currentUserId}`
         );
         response.data.forEach((productId) => {
           this.likedProducts[productId] = true;
         });
->>>>>>> Stashed changes
       } catch (error) {
         console.error("Error fetching liked products:", error);
       }
@@ -181,7 +173,7 @@ export default {
     async fetchProducts() {
       try {
         const response = await axios.get(
-          "http://18.178.128.74:3000/api/products"
+          "http://54.248.228.85:3000/api/products"
         );
         console.log("取得した商品データ:", response.data); // デバッグ用
         this.products = response.data;
@@ -217,13 +209,13 @@ export default {
       }
 
       try {
-        await axios.post("http://18.178.128.74:3000/api/like", {
+        await axios.post("http://54.248.228.85:3000/api/like", {
           userId: this.currentUserId,
           productId,
         });
 
         const updatedProduct = await axios.get(
-          `http://18.178.128.74:3000/api/products/${productId}`
+          `http://54.248.228.85:3000/api/products/${productId}`
         );
         // 更新された「いいね」数
         this.selectedProduct.likes = updatedProduct.data.likes;
@@ -237,7 +229,7 @@ export default {
     // いいねを削除（個別）
     async removeLike(product) {
       try {
-        const response = await axios.delete('http://18.178.128.74:3000/api/admin/likes', {
+        const response = await axios.delete('http://54.248.228.85:3000/api/admin/likes', {
           data: { productId: product._id }
         });
 
@@ -267,7 +259,7 @@ export default {
         );
 
         if (confirmed) {
-          const response = await axios.delete('http://18.178.128.74:3000/api/admin/likes/all');
+          const response = await axios.delete('http://54.248.228.85:3000/api/admin/likes/all');
 
           if (response.status === 200) {
             await this.fetchLikedProducts(); // いいね状態を再取得
