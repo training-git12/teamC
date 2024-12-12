@@ -22,12 +22,11 @@
     <!-- 商品をカード形式で表示 -->
     <div class="product-grid">
       <!-- 商品ごとにループ(v-for)してカードを生成 -->
-      <!-- Vue.jsではループで生成される要素に一意のキー(key)を設定する必要があります -->
-      <!-- ホバー時に影を表示 -->
       <el-card
-        v-for="product in products" :key="product._id"
+        v-for="product in products"
+        :key="product._id"
         class="product-card"
-        shadow="hover"  
+        shadow="hover"
       >
         <!-- 商品画像 -->
         <img :src="product.images[0]" alt="Product Image" class="product-image" />
@@ -39,7 +38,7 @@
           <p class="price">価格: {{ product.price }}円</p>
           <!-- 商品説明 -->
           <p class="description">{{ product.description }}</p>
-          <!-- 詳細ボタン（クリックでモーダルを表示） -->
+          <!-- 詳細ボタン -->
           <el-button type="primary" @click="showDetails(product)">詳細</el-button>
         </div>
       </el-card>
@@ -47,23 +46,30 @@
 
     <!-- 商品詳細モーダル -->
     <el-dialog v-model="dialogVisible" title="商品詳細" width="50%">
-      <!-- モーダル内に選択された商品の詳細を表示 -->
       <div v-if="selectedProduct">
-        <!-- モーダル内の商品画像 -->
+        <!-- 商品画像 -->
         <img :src="selectedProduct.images[0]" alt="Product Image" class="modal-image" />
-        <!-- 価格情報 -->
         <p><strong>価格:</strong> {{ selectedProduct.price }}円</p>
-        <!-- 商品説明 -->
         <p><strong>説明:</strong> {{ selectedProduct.description }}</p>
-        <!-- ブランド -->
         <p><strong>ブランド:</strong> {{ selectedProduct.brand }}</p>
-        <!-- 商品仕様 -->
         <p>
           <strong>仕様:</strong> 素材 - {{ selectedProduct.specifications.material }},
           長さ - {{ selectedProduct.specifications.length }}
         </p>
+
+        <!-- いいねセクション -->
+        <div class="like-section">
+          <p><strong>いいね！:</strong> {{ selectedProduct.likes || 0 }}</p>
+          <el-button
+            v-if="!likedProducts[selectedProduct._id]"
+            type="success"
+            @click="likeProduct"
+          >
+            いいね
+          </el-button>
+          <el-tag v-else type="success">いいね済み</el-tag>
+        </div>
       </div>
-      <!-- モーダルのフッター（閉じるボタン） -->
       <template #footer>
         <el-button @click="closeModal">閉じる</el-button>
       </template>
@@ -84,47 +90,124 @@
 // ・ライフサイクルフック: コンポーネントの初期化や破棄時に実行するコードを記述（例: mounted）
 //-----------------------------------------------------------------------------
 <script>
+//axios: HTTPリクエストライブラリで、APIを通じてバックエンドと通信します
 import axios from "axios";
 
 export default {
+  //データプロパティ
   data() {
     return {
-      products: [],          // 商品リストを格納
-      selectedProduct: null, // 選択された商品の情報を格納
-      dialogVisible: false,  // モーダルの表示/非表示を制御
+      products: [],          // APIから取得した商品のリスト
+      selectedProduct: null, // モーダルで表示する選択された商品
+      likedProducts: {},     // いいね済みの商品の状態を管理
+      currentUserId: "671e0166eed5dc448afe6911", // 現在のユーザーID「yamada taro」
+      dialogVisible: false,  // モーダルの表示/非表示
     };
   },
+  
+  //コンポーネントが初期化された際に呼び出されるライフサイクルフック
+  async mounted() {
+    await this.fetchProducts();      // 商品リストをAPIから取得
+    await this.fetchLikedProducts(); // ユーザーが「いいね」した商品の状態を取得
+  },
+  
   methods: {
-    // 商品リストをAPIから取得
-    async fetchProducts() {
+    //いいね済み商品の取得
+    // ユーザーが「いいね」した商品IDを取得し、likedProducts オブジェクトに記録します
+    async fetchLikedProducts() {
       try {
+<<<<<<< Updated upstream
         // APIリクエスト
         const response = await axios.get("http://18.178.128.74:3000/api/products");
         // const response = await axios.get("http://localhost:3000/api/products");     // ローカルで立ち上げる場合
         // 商品リストをデータに設定
         this.products = response.data;
+=======
+        this.likedProducts = {};
+        const response = await axios.get(
+          `http://18.178.128.74:3000/api/liked-products/${this.currentUserId}`
+        );
+        response.data.forEach((productId) => {
+          this.likedProducts[productId] = true;
+        });
+>>>>>>> Stashed changes
       } catch (error) {
-        // エラー時の処理
-        console.error(error);
+        console.error("Error fetching liked products:", error);
       }
     },
-    // 商品詳細モーダルを表示
+    
+    //「いいね」状態を更新
+    // 商品詳細モーダルで現在表示されている商品の「いいね」数を最新の状態に更新します
+    updateSelectedProductLikeStatus() {
+      if (this.selectedProduct) {
+        this.selectedProduct.likes =
+          this.products.find(
+            (product) => product._id === this.selectedProduct._id
+          )?.likes || 0;
+      }
+    },
+    
+    //商品リストの取得
+    // API (/api/products) を呼び出して商品データを取得し、products 配列に保存します
+    async fetchProducts() {
+      try {
+        const response = await axios.get(
+          "http://18.178.128.74:3000/api/products"
+        );
+        console.log("取得した商品データ:", response.data); // デバッグ用
+        this.products = response.data;
+      } catch (error) {
+        console.error("Error fetching products:", error); // エラーログ
+      }
+    },
+    
+    //商品詳細の表示
+    // ユーザーが商品をクリックした際に、選択した商品データをselectedProductに設定し、
+    // モーダルを表示します
     showDetails(product) {
-      this.selectedProduct = product; // 選択された商品をセット
-      this.dialogVisible = true;      // モーダルを表示
+      this.selectedProduct = product;  // 選択した商品を格納
+      this.dialogVisible = true;       // モーダルを表示
     },
-    // モーダルを閉じる
+    
+    //商品詳細モーダルを閉じる
+    // モーダルを閉じる際に、selectedProductをリセットして非表示にします
     closeModal() {
-      this.dialogVisible = false;    // モーダルを非表示
-      this.selectedProduct = null;   // 選択された商品をクリア
+      this.selectedProduct = null;  // 選択状態をリセット
+      this.dialogVisible = false;   // モーダルを非表示
     },
-  },
-  // コンポーネントのマウント時に商品リストを取得
-  mounted() {
-    this.fetchProducts();
+    
+    //商品を「いいね」する
+    // ユーザーが「いいね」をクリックすると、APIにリクエストを送信し、「いいね」状態を更新します
+    // 成功した場合、モーダル内の「いいね」数を更新し、ローカル状態にも反映します
+    async likeProduct() {
+      const productId = this.selectedProduct._id;
+
+      if (this.likedProducts[productId]) {
+        console.log("Product is already liked:", productId);
+        return;
+      }
+
+      try {
+        await axios.post("http://18.178.128.74:3000/api/like", {
+          userId: this.currentUserId,
+          productId,
+        });
+
+        const updatedProduct = await axios.get(
+          `http://18.178.128.74:3000/api/products/${productId}`
+        );
+        // 更新された「いいね」数
+        this.selectedProduct.likes = updatedProduct.data.likes;
+        // 状態を更新
+        this.likedProducts[productId] = true;
+      } catch (error) {
+        console.error("Error liking product:", error);
+      }
+    },
   },
 };
 </script>
+
 
 //-----------------------------------------------------------------------------
 //スタイルセレクション
@@ -193,5 +276,12 @@ export default {
   width: 50%;            /* 画面幅に応じたサイズ調整 */
   height: auto;          /* 縦横比を維持してリサイズ */
   margin-bottom: 20px;   /* 下に余白を追加 */
+}
+
+/* いいねアイコンのスタイル */
+.like-section {
+  display: flex;          /* アイコンとテキストを横並びに配置 */
+  align-items: center;    /* 要素を垂直方向の中央に揃える */
+  gap: 10px;              /* アイコンとテキストの間に余白を設定 */
 }
 </style>
