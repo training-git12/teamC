@@ -118,8 +118,10 @@
 // ・ライフサイクルフック: コンポーネントの初期化や破棄時に実行するコードを記述（例: mounted）
 //-----------------------------------------------------------------------------
 <script>
+import { ElMessage, ElMessageBox } from 'element-plus'
 //axios: HTTPリクエストライブラリで、APIを通じてバックエンドと通信します
 import axios from "axios";
+
 
 export default {
   //データプロパティ
