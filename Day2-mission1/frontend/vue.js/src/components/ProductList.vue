@@ -18,12 +18,19 @@
 <template>
   <div class="product-list">
     <h1>商品一覧</h1>
+  
+    <!-- 検索窓の追加 -->
+    <el-input
+      v-model="searchQuery"
+      placeholder="商品名を入力"
+      class="search-input"
+      clearable
+    />
     
-    <!-- 商品をカード形式で表示 -->
     <div class="product-grid">
-      <!-- 商品ごとにループ(v-for)してカードを生成 -->
+      <!-- products を filteredProducts に変更 -->
       <el-card
-        v-for="product in products"
+        v-for="product in filteredProducts"
         :key="product._id"
         class="product-card"
         shadow="hover"
@@ -108,7 +115,19 @@ export default {
       likedProducts: {},     // いいね済みの商品の状態を管理
       currentUserId: "671e0166eed5dc448afe6911", // 現在のユーザーID「yamada taro」
       dialogVisible: false,  // モーダルの表示/非表示
+      searchQuery: '',  // 検索クエリを追加
     };
+  },
+
+  // 算出プロパティを追加
+  computed: {
+    // 商品名のみの検索に簡略化
+    filteredProducts() {
+      if (!this.searchQuery) return this.products;
+      return this.products.filter(product => 
+        product.name.includes(this.searchQuery)
+      );
+    }
   },
   
   //コンポーネントが初期化された際に呼び出されるライフサイクルフック
@@ -291,5 +310,12 @@ export default {
   display: flex;          /* アイコンとテキストを横並びに配置 */
   align-items: center;    /* 要素を垂直方向の中央に揃える */
   gap: 10px;              /* アイコンとテキストの間に余白を設定 */
+}
+
+/* 検索窓のスタイル */
+.search-input {
+  width: 300px;
+  margin: 20px auto;
+  display: block;
 }
 </style>
