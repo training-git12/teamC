@@ -18,8 +18,8 @@
 <template>
   <div class="product-list">
     <h1>商品一覧</h1>
-  
-    <!-- 検索窓の追加 -->
+    
+    <!-- 検索窓 -->
     <el-input
       v-model="searchQuery"
       placeholder="商品名を入力"
@@ -27,60 +27,22 @@
       clearable
     />
     
-    <div class="product-grid">
-      <!-- products を filteredProducts に変更 -->
+    <!-- 検索結果が0件の場合のメッセージ -->
+    <div v-if="products.length === 0" class="no-results">
+      検索結果が見つかりません
+    </div>
+
+    <!-- 商品一覧 -->
+    <div v-else class="product-grid">
       <el-card
-        v-for="product in filteredProducts"
+        v-for="product in products"
         :key="product._id"
         class="product-card"
         shadow="hover"
       >
-        <!-- 商品画像 -->
-        <img :src="product.images[0]" alt="Product Image" class="product-image" />
-        
-        <div class="product-info">
-          <!-- 商品名 -->
-          <h2>{{ product.name }}</h2>
-          <!-- 価格 -->
-          <p class="price">価格: {{ product.price }}円</p>
-          <!-- 商品説明 -->
-          <p class="description">{{ product.description }}</p>
-          <!-- 詳細ボタン -->
-          <el-button type="primary" @click="showDetails(product)">詳細</el-button>
-        </div>
+      <!-- 既存の商品カード内容 -->
       </el-card>
     </div>
-
-    <!-- 商品詳細モーダル -->
-    <el-dialog v-model="dialogVisible" title="商品詳細" width="50%">
-      <div v-if="selectedProduct">
-        <!-- 商品画像 -->
-        <img :src="selectedProduct.images[0]" alt="Product Image" class="modal-image" />
-        <p><strong>価格:</strong> {{ selectedProduct.price }}円</p>
-        <p><strong>説明:</strong> {{ selectedProduct.description }}</p>
-        <p><strong>ブランド:</strong> {{ selectedProduct.brand }}</p>
-        <p>
-          <strong>仕様:</strong> 素材 - {{ selectedProduct.specifications.material }},
-          長さ - {{ selectedProduct.specifications.length }}
-        </p>
-
-        <!-- いいねセクション -->
-        <div class="like-section">
-          <p><strong>いいね！:</strong> {{ selectedProduct.likes || 0 }}</p>
-          <el-button
-            v-if="!likedProducts[selectedProduct._id]"
-            type="success"
-            @click="likeProduct"
-          >
-            いいね
-          </el-button>
-          <el-tag v-else type="success">いいね済み</el-tag>
-        </div>
-      </div>
-      <template #footer>
-        <el-button @click="closeModal">閉じる</el-button>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
@@ -120,13 +82,16 @@ export default {
   },
 
   // 算出プロパティを追加
-  computed: {
-    // 商品名のみの検索に簡略化
-    filteredProducts() {
-      if (!this.searchQuery) return this.products;
-      return this.products.filter(product => 
-        product.name.includes(this.searchQuery)
-      );
+  watch: {
+    // searchQueryの変更を監視
+    searchQuery: async function(newQuery) {
+      if (!newQuery) {
+        // 検索クエリが空の場合は全商品を表示
+        await this.fetchProducts();
+      } else {
+        // 検索クエリがある場合は検索APIを呼び出し
+        await this.searchProducts(newQuery);
+      }
     }
   },
   
@@ -145,7 +110,6 @@ export default {
       }
     );
   },
-  
   
   methods: {
     //いいね済み商品の取得
@@ -231,6 +195,22 @@ export default {
         console.error("Error liking product:", error);
       }
     },
+
+    async searchProducts(query) {
+    try {
+      const response = await axios.get(`http://54.248.228.85:3000/api/products/search`, {
+        params: { query: query }
+      });
+      this.products = response.data;
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        // 検索結果が見つからない場合
+        this.products = [];
+      } else {
+        console.error("Error searching products:", error);
+      }
+    }
+  },
   },
 };
 </script>
@@ -313,6 +293,18 @@ export default {
 }
 
 /* 検索窓のスタイル */
+.search-input {
+  width: 300px;
+  margin: 20px auto;
+  display: block;
+}
+
+.no-results {
+  text-align: center;
+  margin: 20px;
+  color: #666;
+}
+
 .search-input {
   width: 300px;
   margin: 20px auto;
